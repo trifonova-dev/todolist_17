@@ -1,18 +1,15 @@
-import { useAppSelector } from "@/common/hooks"
-import { selectIsLoggedIn } from "@/features/auth/model/auth-slice"
-import { Navigate } from "react-router"
+import { Navigate, Outlet } from "react-router"
 import { Path } from "@/common/routing"
 import type { ReactNode } from "react"
 
 type Props = {
-  children: ReactNode
+  children?: ReactNode
+  isAllowed: boolean
 }
 
-export const ProtectedRoute = ({ children }: Props) => {
-  const isLoggedIn = useAppSelector(selectIsLoggedIn)
-
-  if (!isLoggedIn) {
+export const ProtectedRoute = ({ children, isAllowed }: Props) => {
+  if (!isAllowed) {
     return <Navigate to={Path.Login} />
   }
-  return children
+  return children ? children : <Outlet />
 }
