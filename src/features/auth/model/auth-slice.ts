@@ -7,6 +7,7 @@ import type { LoginInputs } from "@/features/auth/lib/schemas"
 import { authApi } from "@/features/auth/api/authApi"
 import { ResultCode } from "@/common/enums"
 import { setAppStatusAC } from "@/app/app-slice"
+import { AUTH_TOKEN } from "@/common/constants"
 
 export const authSlice = createAppSlice({
   name: "auth",
@@ -24,6 +25,7 @@ export const authSlice = createAppSlice({
           const res = await authApi.login(data)
           if (res.data.resultCode === ResultCode.Success) {
             dispatch(setAppStatusAC({ status: "succeeded" }))
+            localStorage.setItem(AUTH_TOKEN, res.data.data.token)
             return { isLoggedIn: true }
           } else {
             handleServerAppError(res.data, dispatch)

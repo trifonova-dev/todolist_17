@@ -13,10 +13,14 @@ import Grid from "@mui/material/Grid"
 import TextField from "@mui/material/TextField"
 import { Controller, type SubmitHandler, useForm } from "react-hook-form"
 import styles from "./Login.module.css"
-import { loginTC } from "@/features/auth/model/auth-slice"
+import { loginTC, selectIsLoggedIn } from "@/features/auth/model/auth-slice"
+import { Navigate } from "react-router"
+import { Path } from "@/common/routing"
 
 export const Login = () => {
   const themeMode = useAppSelector(selectThemeMode)
+
+  const isLoggedIn = useAppSelector(selectIsLoggedIn)
 
   const theme = getTheme(themeMode)
 
@@ -35,6 +39,10 @@ export const Login = () => {
   const onSubmit: SubmitHandler<LoginInputs> = (data) => {
     dispatch(loginTC(data))
     reset()
+  }
+
+  if (isLoggedIn) {
+    return <Navigate to={Path.Main} />
   }
 
   return (
