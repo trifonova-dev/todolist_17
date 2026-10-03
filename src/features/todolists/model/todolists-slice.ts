@@ -1,9 +1,17 @@
 import { setAppStatusAC } from "@/app/app-slice"
 import { ResultCode } from "@/common/enums"
 import type { RequestStatus } from "@/common/types"
-import { createAppSlice, handleServerAppError, handleServerNetworkError } from "@/common/utils"
+import {
+  createAppSlice,
+  handleServerAppError,
+  handleServerNetworkError,
+} from "@/common/utils"
 import { todolistsApi } from "@/features/todolists/api/todolistsApi"
-import { type Todolist, todolistSchema } from "@/features/todolists/api/todolistsApi.types"
+import {
+  type Todolist,
+  todolistSchema,
+} from "@/features/todolists/api/todolistsApi.types"
+import { clearDataAC } from "@/common/actions"
 
 export const todolistsSlice = createAppSlice({
   name: "todolists",
@@ -27,7 +35,11 @@ export const todolistsSlice = createAppSlice({
       },
       {
         fulfilled: (_state, action) => {
-          return action.payload.todolists.map((todolist) => ({ ...todolist, filter: "all", entityStatus: "idle" }))
+          return action.payload.todolists.map((todolist) => ({
+            ...todolist,
+            filter: "all",
+            entityStatus: "idle",
+          }))
         },
       },
     ),
@@ -50,7 +62,11 @@ export const todolistsSlice = createAppSlice({
       },
       {
         fulfilled: (state, action) => {
-          state.unshift({ ...action.payload.todolist, filter: "all", entityStatus: "idle" })
+          state.unshift({
+            ...action.payload.todolist,
+            filter: "all",
+            entityStatus: "idle",
+          })
         },
       },
     ),
@@ -109,19 +125,28 @@ export const todolistsSlice = createAppSlice({
         },
       },
     ),
-    changeTodolistFilterAC: create.reducer<{ id: string; filter: FilterValues }>((state, action) => {
-      const todolist = state.find((todolist) => todolist.id === action.payload.id)
-      if (todolist) {
-        todolist.filter = action.payload.filter
-      }
-    }),
-    changeTodolistStatusAC: create.reducer<{ id: string; entityStatus: RequestStatus }>((state, action) => {
-      const todolist = state.find((todolist) => todolist.id === action.payload.id)
-      if (todolist) {
-        todolist.entityStatus = action.payload.entityStatus
-      }
-    }),
+    changeTodolistFilterAC: create.reducer<{ id: string; filter: FilterValues }>(
+      (state, action) => {
+        const todolist = state.find((todolist) => todolist.id === action.payload.id)
+        if (todolist) {
+          todolist.filter = action.payload.filter
+        }
+      },
+    ),
+    changeTodolistStatusAC: create.reducer<{ id: string; entityStatus: RequestStatus }>(
+      (state, action) => {
+        const todolist = state.find((todolist) => todolist.id === action.payload.id)
+        if (todolist) {
+          todolist.entityStatus = action.payload.entityStatus
+        }
+      },
+    ),
   }),
+  extraReducers: (builder) => {
+    builder.addCase(clearDataAC, () => {
+      return [] as DomainTodolist[]
+    })
+  },
 })
 
 export const { selectTodolists } = todolistsSlice.selectors

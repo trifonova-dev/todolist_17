@@ -1,10 +1,19 @@
 import { setAppStatusAC } from "@/app/app-slice"
 import type { RootState } from "@/app/store"
 import { ResultCode } from "@/common/enums"
-import { createAppSlice, handleServerAppError, handleServerNetworkError } from "@/common/utils"
+import {
+  createAppSlice,
+  handleServerAppError,
+  handleServerNetworkError,
+} from "@/common/utils"
 import { tasksApi } from "@/features/todolists/api/tasksApi"
-import { type DomainTask, domainTaskSchema, type UpdateTaskModel } from "@/features/todolists/api/tasksApi.types"
+import {
+  type DomainTask,
+  domainTaskSchema,
+  type UpdateTaskModel,
+} from "@/features/todolists/api/tasksApi.types"
 import { createTodolistTC, deleteTodolistTC } from "./todolists-slice"
+import { clearDataAC } from "@/common/actions"
 
 export const tasksSlice = createAppSlice({
   name: "tasks",
@@ -19,6 +28,9 @@ export const tasksSlice = createAppSlice({
       })
       .addCase(deleteTodolistTC.fulfilled, (state, action) => {
         delete state[action.payload.id]
+      })
+      .addCase(clearDataAC, () => {
+        return {}
       })
   },
   reducers: (create) => ({
@@ -42,7 +54,10 @@ export const tasksSlice = createAppSlice({
       },
     ),
     createTaskTC: create.asyncThunk(
-      async (payload: { todolistId: string; title: string }, { dispatch, rejectWithValue }) => {
+      async (
+        payload: { todolistId: string; title: string },
+        { dispatch, rejectWithValue },
+      ) => {
         try {
           dispatch(setAppStatusAC({ status: "loading" }))
           const res = await tasksApi.createTask(payload)
@@ -65,7 +80,10 @@ export const tasksSlice = createAppSlice({
       },
     ),
     deleteTaskTC: create.asyncThunk(
-      async (payload: { todolistId: string; taskId: string }, { dispatch, rejectWithValue }) => {
+      async (
+        payload: { todolistId: string; taskId: string },
+        { dispatch, rejectWithValue },
+      ) => {
         try {
           dispatch(setAppStatusAC({ status: "loading" }))
           const res = await tasksApi.deleteTask(payload)
@@ -93,7 +111,11 @@ export const tasksSlice = createAppSlice({
     ),
     updateTaskTC: create.asyncThunk(
       async (
-        payload: { todolistId: string; taskId: string; domainModel: Partial<UpdateTaskModel> },
+        payload: {
+          todolistId: string
+          taskId: string
+          domainModel: Partial<UpdateTaskModel>
+        },
         { dispatch, getState, rejectWithValue },
       ) => {
         const { todolistId, taskId, domainModel } = payload
@@ -133,15 +155,23 @@ export const tasksSlice = createAppSlice({
       {
         fulfilled: (state, action) => {
           const allTodolistTasks = state[action.payload.task.todoListId]
-          const taskIndex = allTodolistTasks.findIndex((task) => task.id === action.payload.task.id)
+          const taskIndex = allTodolistTasks.findIndex(
+            (task) => task.id === action.payload.task.id,
+          )
           if (taskIndex !== -1) {
             allTodolistTasks[taskIndex] = action.payload.task
           }
         },
       },
     ),
-    changeTaskTitleAC: create.reducer<{ todolistId: string; taskId: string; title: string }>((state, action) => {
-      const task = state[action.payload.todolistId].find((task) => task.id === action.payload.taskId)
+    changeTaskTitleAC: create.reducer<{
+      todolistId: string
+      taskId: string
+      title: string
+    }>((state, action) => {
+      const task = state[action.payload.todolistId].find(
+        (task) => task.id === action.payload.taskId,
+      )
       if (task) {
         task.title = action.payload.title
       }
@@ -150,7 +180,8 @@ export const tasksSlice = createAppSlice({
 })
 
 export const { selectTasks } = tasksSlice.selectors
-export const { fetchTasksTC, createTaskTC, deleteTaskTC, updateTaskTC } = tasksSlice.actions
+export const { fetchTasksTC, createTaskTC, deleteTaskTC, updateTaskTC } =
+  tasksSlice.actions
 export const tasksReducer = tasksSlice.reducer
 
 export type TasksState = Record<string, DomainTask[]>
