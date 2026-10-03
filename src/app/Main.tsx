@@ -9,6 +9,7 @@ import { Navigate } from "react-router"
 import { Path } from "@/common/routing"
 
 export const Main = () => {
+  debugger
   const dispatch = useAppDispatch()
   const isLoggedIn = useAppSelector(selectIsLoggedIn)
 

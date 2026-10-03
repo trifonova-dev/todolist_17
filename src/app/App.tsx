@@ -10,12 +10,14 @@ import { useEffect } from "react"
 import { initializeAppTC } from "@/features/auth/model/auth-slice"
 
 export const App = () => {
+  debugger
   const themeMode = useAppSelector(selectThemeMode)
   const dispatch = useAppDispatch()
 
   const theme = getTheme(themeMode)
 
   useEffect(() => {
+    debugger
     dispatch(initializeAppTC())
   }, [])
 

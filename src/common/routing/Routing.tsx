@@ -10,6 +10,7 @@ export const Path = {
 } as const
 
 export const Routing = () => (
+
   <Routes>
     <Route path={Path.Main} element={<Main />} />
     <Route path={Path.Login} element={<Login />} />

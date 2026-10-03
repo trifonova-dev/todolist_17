@@ -71,6 +71,7 @@ export const authSlice = createAppSlice({
         try {
           dispatch(setAppStatusAC({ status: "loading" }))
           const res = await authApi.me()
+          debugger
           if (res.data.resultCode === ResultCode.Success) {
             dispatch(setAppStatusAC({ status: "succeeded" }))
             return { isLoggedIn: true }
