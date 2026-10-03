@@ -13,14 +13,12 @@ import styles from "./App.module.css"
 
 export const App = () => {
   const [isInitialized, setIsInitialized] = useState(false)
-  debugger
   const themeMode = useAppSelector(selectThemeMode)
   const dispatch = useAppDispatch()
 
   const theme = getTheme(themeMode)
 
   useEffect(() => {
-    debugger
     dispatch(initializeAppTC()).finally(() => setIsInitialized(true))
   }, [])
 
